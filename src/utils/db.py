@@ -42,3 +42,27 @@ def init_tasks_db(db_path: str | None = None) -> None:
             """
         )
         connection.commit()
+
+
+def init_users_db(db_path: str | None = None) -> None:
+    """Создает таблицу пользователей, если она отсутствует."""
+
+    with get_connection(db_path) as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.commit()
+
+
+def init_application_db(db_path: str | None = None) -> None:
+    """Инициализирует все таблицы приложения."""
+
+    init_tasks_db(db_path)
+    init_users_db(db_path)
