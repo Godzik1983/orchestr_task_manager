@@ -1,10 +1,13 @@
-name: Deploy
+﻿name: Deploy
 
 on:
   push:
     branches:
       - master
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 permissions:
   contents: read
@@ -17,7 +20,7 @@ jobs:
       image_ref: ${{ steps.image_ref.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Normalize image name
         id: image_name
@@ -72,7 +75,7 @@ jobs:
                 container_name: orchestr_task_manager
                 restart: unless-stopped
                 ports:
-                  - "8000:8000"
+                  - "${APP_PORT}:8000"
                 environment:
                   AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
                   TASKS_DB_PATH: /app/data/tasks.db
@@ -84,6 +87,7 @@ jobs:
 
             cat > .env <<EOF
             IMAGE=${{ needs.build_and_push.outputs.image_ref }}
+            APP_PORT=${{ secrets.APP_PORT || '8080' }}
             AUTH_SECRET_KEY=${{ secrets.AUTH_SECRET_KEY }}
             EOF
 

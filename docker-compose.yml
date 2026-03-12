@@ -6,7 +6,7 @@ services:
     container_name: orchestr_task_manager
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "${APP_PORT:-8080}:8000"
     environment:
       AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
       TASKS_DB_PATH: /app/data/tasks.db
