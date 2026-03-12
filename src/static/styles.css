@@ -77,6 +77,20 @@ body {
   color: var(--text-muted);
 }
 
+.deploy-badge {
+  margin: 10px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #def7f1;
+  border: 1px solid rgba(0, 127, 106, 0.22);
+  color: #005f50;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
 .card {
   background: var(--bg-card);
   backdrop-filter: blur(8px);
