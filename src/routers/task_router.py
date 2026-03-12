@@ -1,4 +1,4 @@
-"""Роутер CRUD-операций для задач."""
+﻿"""Роутер CRUD-операций для задач."""
 
 from datetime import datetime
 
@@ -17,10 +17,19 @@ from src.modules.tasks.service import EmptyTaskUpdateError, TaskNotFoundError, T
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
-# На данном этапе используем in-memory repository как простой storage.
+# Базовые singleton-объекты модуля; для тестов можно перенастроить источник БД.
 _repository = TaskRepository()
 _service = TaskService(_repository)
 _controller = TaskController(_service)
+
+
+def configure_task_repository(db_path: str | None = None) -> None:
+    """Переключает модуль tasks на конкретный файл БД."""
+
+    global _repository, _service, _controller
+    _repository = TaskRepository(db_path=db_path)
+    _service = TaskService(_repository)
+    _controller = TaskController(_service)
 
 
 @router.post("/", response_model=TaskResponseSchema, status_code=status.HTTP_201_CREATED)
@@ -85,6 +94,6 @@ def delete_task(task_id: int) -> Response:
 
 
 def reset_task_module_state() -> None:
-    """Сбрасывает in-memory состояние модуля для тестов."""
+    """Сбрасывает состояние модуля tasks для тестов."""
 
     _repository.reset()

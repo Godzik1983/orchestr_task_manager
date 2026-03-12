@@ -1,20 +1,26 @@
-"""Integration-тесты API модуля tasks."""
+﻿"""Integration-тесты API модуля tasks."""
 
 from datetime import timedelta
+from pathlib import Path
 from urllib.parse import quote
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
 
 from src.app import app
 from src.modules.tasks.entities import TaskStatus, utc_now
-from src.routers.task_router import reset_task_module_state
+from src.routers.task_router import configure_task_repository, reset_task_module_state
 
 
 @pytest.fixture(autouse=True)
-def clear_state() -> None:
-    """Сбрасывает хранилище задач перед каждым тестом."""
+def configure_test_db() -> None:
+    """Настраивает отдельную SQLite БД для каждого integration-теста."""
 
+    temp_dir = Path("tests/.tmp")
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    db_path = str(temp_dir / f"integration_{uuid4().hex}.db")
+    configure_task_repository(db_path)
     reset_task_module_state()
 
 

@@ -1,20 +1,26 @@
-"""Unit-тесты для TaskService."""
+﻿"""Unit-тесты для TaskService."""
 
 from datetime import timedelta
+from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
-from src.modules.tasks.entities import utc_now
-from src.modules.tasks.entities import TaskStatus
+from src.modules.tasks.entities import TaskStatus, utc_now
 from src.modules.tasks.repository import TaskRepository
 from src.modules.tasks.service import EmptyTaskUpdateError, TaskNotFoundError, TaskService
 
 
 @pytest.fixture()
 def service() -> TaskService:
-    """Создает изолированный сервис для unit-тестов."""
+    """Создает сервис с изолированной SQLite БД для unit-тестов."""
 
-    return TaskService(TaskRepository())
+    temp_dir = Path("tests/.tmp")
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    db_path = str(temp_dir / f"unit_{uuid4().hex}.db")
+    repository = TaskRepository(db_path=db_path)
+    repository.reset()
+    return TaskService(repository)
 
 
 def test_create_and_get_task(service: TaskService) -> None:

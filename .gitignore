@@ -10,3 +10,6 @@ pytest-cache-files-*/
 venv/
 .venv/
 
+# Локальные SQLite файлы
+*.db
+tests/.tmp/
