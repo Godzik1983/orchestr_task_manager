@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  app:
+    image: ${IMAGE:-ghcr.io/godzik1983/orchestr_task_manager:latest}
+    container_name: orchestr_task_manager
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
+      TASKS_DB_PATH: /app/data/tasks.db
+    volumes:
+      - task_data:/app/data
+
+volumes:
+  task_data:
